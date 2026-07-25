@@ -9,7 +9,6 @@ COPY services/api/app    ./app
 COPY services/api/models ./models
 COPY ml ./ml
 
-# Run from ml/ directory so generate_synthetic_data.py is importable
 RUN cd ml && python train_sklearn.py \
       --n 30000 \
       --model-out ../models/fraud_sklearn.joblib \
