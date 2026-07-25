@@ -9,12 +9,10 @@ COPY services/api/app    ./app
 COPY services/api/models ./models
 COPY ml ./ml
 
-# Train a portable sklearn model at build time.
-# This runs without XGBoost's native libs (no Mac libomp issues).
-# If fraud_xgb.json is also present the API will prefer it at runtime.
-RUN python ml/train_sklearn.py \
+# Run from ml/ directory so generate_synthetic_data.py is importable
+RUN cd ml && python train_sklearn.py \
       --n 30000 \
-      --model-out models/fraud_sklearn.joblib \
+      --model-out ../models/fraud_sklearn.joblib \
       --metrics-out /tmp/metrics_sklearn.json
 
 ENV PYTHONUNBUFFERED=1
