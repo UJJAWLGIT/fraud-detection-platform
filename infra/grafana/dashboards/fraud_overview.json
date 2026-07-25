@@ -1,0 +1,48 @@
+{
+  "annotations": { "list": [] },
+  "editable": true,
+  "panels": [
+    {
+      "type": "timeseries",
+      "title": "Scoring Latency (p95)",
+      "gridPos": { "h": 8, "w": 12, "x": 0, "y": 0 },
+      "targets": [{
+        "expr": "histogram_quantile(0.95, sum(rate(fraud_score_latency_seconds_bucket[1m])) by (le))",
+        "legendFormat": "p95 latency"
+      }]
+    },
+    {
+      "type": "timeseries",
+      "title": "Requests / sec by Decision",
+      "gridPos": { "h": 8, "w": 12, "x": 12, "y": 0 },
+      "targets": [{
+        "expr": "sum(rate(fraud_score_requests_total[1m])) by (decision)",
+        "legendFormat": "{{decision}}"
+      }]
+    },
+    {
+      "type": "timeseries",
+      "title": "Rule Hits / sec",
+      "gridPos": { "h": 8, "w": 12, "x": 0, "y": 8 },
+      "targets": [{
+        "expr": "sum(rate(fraud_rule_hits_total[1m])) by (rule)",
+        "legendFormat": "{{rule}}"
+      }]
+    },
+    {
+      "type": "stat",
+      "title": "Model Backend",
+      "gridPos": { "h": 8, "w": 12, "x": 12, "y": 8 },
+      "targets": [{
+        "expr": "fraud_model_backend_info",
+        "legendFormat": "backend"
+      }]
+    }
+  ],
+  "schemaVersion": 39,
+  "tags": ["fraud"],
+  "time": { "from": "now-15m", "to": "now" },
+  "title": "Fraud Detection Overview",
+  "uid": "fraud-overview",
+  "version": 1
+}

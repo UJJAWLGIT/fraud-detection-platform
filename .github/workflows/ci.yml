@@ -1,0 +1,35 @@
+name: ci
+
+on:
+  push:
+  pull_request:
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+
+      - name: Install dependencies
+        run: pip install -r services/api/requirements.txt
+
+      - name: Unit tests
+        run: |
+          cd services/api
+          PYTHONPATH=. pytest tests/ -v --tb=short
+
+      - name: Train sklearn smoke test
+        run: |
+          pip install -q scikit-learn pandas numpy joblib
+          cd ml
+          python train_sklearn.py --n 5000 \
+            --model-out /tmp/smoke_model.joblib \
+            --metrics-out /tmp/smoke_metrics.json
+          python -c "import json,sys; m=json.load(open('/tmp/smoke_metrics.json')); print('AUC',m['auc']); sys.exit(0 if m['auc'] > 0.5 else 1)"
+
+      - name: Docker build
+        run: docker build -t fraud-api . -f services/api/Dockerfile
