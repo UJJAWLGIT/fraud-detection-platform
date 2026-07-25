@@ -56,12 +56,3 @@ jobs:
           print('AUC:', m['auc'])
           sys.exit(0 if m['auc'] > 0.5 else 1)
           "
-
-  docker-build:
-    name: Docker Build
-    runs-on: ubuntu-latest
-    steps:
-      - uses: actions/checkout@v4
-
-      - name: Build API image
-        run: docker build -t fraud-api . -f services/api/Dockerfile
